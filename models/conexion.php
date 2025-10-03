@@ -1,7 +1,7 @@
 <?php
 class Conexion {
     private $host = "localhost";
-    private $db_name = "final";
+    private $db_name = "textil_camila";
     private $username = "root";
     private $password = "";
     public $conn;

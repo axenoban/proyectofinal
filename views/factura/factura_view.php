@@ -3,7 +3,11 @@
 
 <?php
 $facturaModel = new Factura();
-$factura = $facturaModel->obtenerFacturaPorId($_GET['id']);
+$facturaId = $_GET['id'] ?? null;
+$factura = $facturaId ? $facturaModel->obtenerFacturaPorId($facturaId) : null;
+if (!$factura) {
+    die('Factura no encontrada.');
+}
 $detalle = $facturaModel->obtenerDetalleFactura($factura['pedido_id']);
 ?>
 
@@ -12,7 +16,7 @@ $detalle = $facturaModel->obtenerDetalleFactura($factura['pedido_id']);
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Detalles de Factura</title>
+  <title>Factura Textil Camila</title>
   <?php require_once __DIR__ . '/../../includes/header.php'; ?>
   <link rel="stylesheet" href="/proyectofinal/assets/css/dashboard.css" />
   <link rel="stylesheet" href="/proyectofinal/assets/css/navbar.css" />
@@ -22,7 +26,14 @@ $detalle = $facturaModel->obtenerDetalleFactura($factura['pedido_id']);
 <?php require_once __DIR__ . '/../../includes/navbar.php'; ?>
 
 <div class="container mt-5">
-  <h2>Detalles de Factura N° <?= htmlspecialchars($factura['numero_factura']) ?></h2>
+  <h2>Factura N° <?= htmlspecialchars($factura['numero_factura']) ?></h2>
+
+  <?php
+    $estadoFactura = [
+      'emitida' => 'Emitida',
+      'anulada' => 'Anulada'
+    ];
+  ?>
 
   <table class="table table-bordered">
     <tr>
@@ -43,7 +54,7 @@ $detalle = $facturaModel->obtenerDetalleFactura($factura['pedido_id']);
     </tr>
     <tr>
       <th>Forma de pago</th>
-      <td><?= htmlspecialchars($factura['forma_pago']) ?></td>
+      <td><?= htmlspecialchars($factura['forma_pago'] ?? 'Pendiente') ?></td>
     </tr>
     <tr>
       <th>Subtotal</th>
@@ -57,13 +68,17 @@ $detalle = $facturaModel->obtenerDetalleFactura($factura['pedido_id']);
       <th>Total</th>
       <td>Bs. <?= number_format($factura['total'], 2) ?></td>
     </tr>
+    <tr>
+      <th>Estado</th>
+      <td><?= htmlspecialchars($estadoFactura[$factura['estado']] ?? ucfirst($factura['estado'])) ?></td>
+    </tr>
   </table>
 
-  <h4>Detalles de los productos:</h4>
+  <h4>Detalle de productos:</h4>
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>Plato</th>
+        <th>Producto</th>
         <th>Cantidad</th>
         <th>Precio Unitario</th>
         <th>Subtotal</th>

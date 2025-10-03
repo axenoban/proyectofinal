@@ -10,19 +10,79 @@ class Usuario {
     }
     
     public function login($username, $password) {
-    $sql = "SELECT * FROM usuarios WHERE username = :username AND estado = 'activo'";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->bindParam(':username', $username);
-    $stmt->execute();
+        $sql = "SELECT * FROM usuarios WHERE username = :username AND estado = 'activo'";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
 
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($user && password_verify($password, $user['password'])) {
-        return $user;
+        if (!$user) {
+            return false;
+        }
+
+        $storedPassword = $user['password'] ?? '';
+        $passwordInfo = password_get_info($storedPassword);
+
+        // Caso 1: la contraseña está hasheada con password_hash
+        if ($passwordInfo['algo'] !== 0) {
+            if (password_verify($password, $storedPassword)) {
+                if (password_needs_rehash($storedPassword, PASSWORD_DEFAULT)) {
+                    $this->rehashPassword((int) $user['id'], $password);
+                }
+                $this->updateLastLogin((int) $user['id']);
+                return $this->getUserWithPassword((int) $user['id']);
+            }
+        } else {
+            // Caso 2: la contraseña está almacenada en texto plano o con algoritmos legados
+            if (hash_equals($storedPassword, $password)) {
+                if ($this->rehashPassword((int) $user['id'], $password)) {
+                    $user = $this->getUserWithPassword((int) $user['id']);
+                }
+                $this->updateLastLogin((int) $user['id']);
+                return $user;
+            }
+
+            $lowerStoredPassword = strtolower($storedPassword);
+            if (strlen($lowerStoredPassword) === 32 && ctype_xdigit($lowerStoredPassword) && hash_equals($lowerStoredPassword, md5($password))) {
+                if ($this->rehashPassword((int) $user['id'], $password)) {
+                    $user = $this->getUserWithPassword((int) $user['id']);
+                }
+                $this->updateLastLogin((int) $user['id']);
+                return $user;
+            }
+
+            if (strlen($lowerStoredPassword) === 40 && ctype_xdigit($lowerStoredPassword) && hash_equals($lowerStoredPassword, sha1($password))) {
+                if ($this->rehashPassword((int) $user['id'], $password)) {
+                    $user = $this->getUserWithPassword((int) $user['id']);
+                }
+                $this->updateLastLogin((int) $user['id']);
+                return $user;
+            }
+        }
+
+        return false;
     }
 
-    return false;
-}
+    private function updateLastLogin(int $id): void {
+        $stmt = $this->conn->prepare("UPDATE usuarios SET ultimo_login = NOW() WHERE id = :id");
+        $stmt->execute(['id' => $id]);
+    }
+
+    private function rehashPassword(int $id, string $password): bool {
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $this->conn->prepare("UPDATE usuarios SET password = :password WHERE id = :id");
+        return $stmt->execute([
+            'id' => $id,
+            'password' => $hash
+        ]);
+    }
+
+    private function getUserWithPassword(int $id) {
+        $stmt = $this->conn->prepare("SELECT * FROM usuarios WHERE id = :id");
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     // Verifica si username existe (para crear)
     public function existsUsername($username) {

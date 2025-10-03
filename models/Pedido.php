@@ -12,7 +12,7 @@ class Pedido
     }
 
 
-    // Guarda pedido principal y su detalle
+    // Guarda la orden principal y su detalle
     public function guardarPedido($usuario_id, $cliente_id, $hora_entrega, $total, $metodo, $comentarios, $detalle)
     {
         $sql = "INSERT INTO pedidos (usuario_id, cliente_id, hora_entrega, total, metodo_pedido, comentarios)
@@ -39,7 +39,7 @@ class Pedido
 
     public function actualizarPedido($pedido_id, $cliente_id, $hora_entrega, $total, $metodo, $comentarios, $detalle)
     {
-        // Actualiza datos del pedido
+        // Actualiza datos de la orden
         $sql = "UPDATE pedidos SET cliente_id = ?, hora_entrega = ?, total = ?, metodo_pedido = ?, comentarios = ? WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$cliente_id, $hora_entrega, $total, $metodo, $comentarios, $pedido_id]);
@@ -69,7 +69,7 @@ class Pedido
     public function actualizarEstadoPedido($pedido_id, $estado)
     {
         // Verifica que el estado sea uno de los valores posibles
-        if (!in_array($estado, ['pendiente', 'en preparación', 'entregado', 'anulado'])) {
+        if (!in_array($estado, ['pendiente', 'en confección', 'listo', 'cancelado'])) {
             return false; // Error si el estado no es válido
         }
 
@@ -80,7 +80,7 @@ class Pedido
         return true;
     }
 
-    // Obtiene todos los pedidos (puede modificar según necesidades)
+    // Obtiene todas las órdenes registradas
     public function obtenerTodos()
     {
         $sql = "SELECT p.*, c.nombre AS cliente, u.nombre AS usuario
@@ -93,7 +93,7 @@ class Pedido
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Obtiene los platos de un pedido específico
+    // Obtiene los productos de una orden específica
     public function obtenerDetalle($pedido_id)
     {
         $sql = "SELECT d.*, pl.nombre
@@ -105,7 +105,7 @@ class Pedido
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Obtiene un solo pedido con datos de cliente y usuario
+    // Obtiene una orden con datos de cliente y usuario
     public function obtenerPedidoPorId($pedido_id)
     {
         $sql = "SELECT p.*, c.nombre AS cliente, c.direccion, u.nombre AS usuario
@@ -120,11 +120,11 @@ class Pedido
 
     public function eliminarPedido($id)
     {
-        // Primero elimina los detalles del pedido
+        // Primero elimina los detalles asociados
         $stmt1 = $this->conn->prepare("DELETE FROM detalle_pedidos WHERE pedido_id = ?");
         $stmt1->execute([$id]);
 
-        // Luego elimina el pedido principal
+        // Luego elimina la orden principal
         $stmt2 = $this->conn->prepare("DELETE FROM pedidos WHERE id = ?");
         $stmt2->execute([$id]);
 

@@ -18,12 +18,12 @@ switch ($action) {
         $categorias = $categoriaModel->getAll();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nombre = $_POST['nombre'];
-            $descripcion = $_POST['descripcion'] ?? '';
-            $precio = $_POST['precio'];
-            $categoria_id = $_POST['categoria_id'];
+            $nombre = trim($_POST['nombre'] ?? '');
+            $descripcion = trim($_POST['descripcion'] ?? '');
+            $precio = (float) ($_POST['precio'] ?? 0);
+            $categoria_id = (int) ($_POST['categoria_id'] ?? 0);
             $estado = $_POST['estado'] ?? 'disponible';
-            $tiempo_preparacion = $_POST['tiempo_preparacion'] ?? 0;
+            $tiempo_preparacion = (int) ($_POST['tiempo_preparacion'] ?? 0);
 
             $platoModel->create($nombre, $descripcion, $precio, $categoria_id, $estado, $tiempo_preparacion);
 
@@ -44,12 +44,12 @@ switch ($action) {
         $categorias = $categoriaModel->getAll();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nombre = $_POST['nombre'];
-            $descripcion = $_POST['descripcion'] ?? '';
-            $precio = $_POST['precio'];
-            $categoria_id = $_POST['categoria_id'];
+            $nombre = trim($_POST['nombre'] ?? '');
+            $descripcion = trim($_POST['descripcion'] ?? '');
+            $precio = (float) ($_POST['precio'] ?? 0);
+            $categoria_id = (int) ($_POST['categoria_id'] ?? 0);
             $estado = $_POST['estado'] ?? 'disponible';
-            $tiempo_preparacion = $_POST['tiempo_preparacion'] ?? 0;
+            $tiempo_preparacion = (int) ($_POST['tiempo_preparacion'] ?? 0);
 
             $platoModel->update($id, $nombre, $descripcion, $precio, $categoria_id, $estado, $tiempo_preparacion);
 

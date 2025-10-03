@@ -1,16 +1,26 @@
--- Tabla usuarios (admins y empleados)
+-- Script de base de datos para Textil Camila
+-- Este script crea una base limpia con datos de ejemplo adaptados al catálogo textil
+
+DROP DATABASE IF EXISTS textil_camila;
+CREATE DATABASE textil_camila CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE textil_camila;
+
+-- Tabla usuarios (administradores y personal de ventas)
 CREATE TABLE usuarios (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(50) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
-  nombre VARCHAR(100),
+  nombre VARCHAR(100) NOT NULL,
   rol ENUM('admin', 'empleado') DEFAULT 'empleado',
   estado ENUM('activo', 'inactivo') DEFAULT 'activo',
   ultimo_login TIMESTAMP NULL,
   creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla clientes (quienes hacen pedidos)
+INSERT INTO usuarios (username, password, nombre, rol, estado) VALUES
+('admin@gmail.com', '$2y$12$TzwZtGhBXNDcxnztiyiP/ONszC/3eML9FIIPKXpu41xBjadiYUdsq', 'Camila Administradora', 'admin', 'activo');
+
+-- Tabla clientes (boutiques y compradores frecuentes)
 CREATE TABLE clientes (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(100) NOT NULL,
@@ -22,14 +32,25 @@ CREATE TABLE clientes (
   creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla categorias (para clasificar los platos)
+INSERT INTO clientes (nombre, telefono, email, direccion, notas) VALUES
+('Boutique Aurora', '76543210', 'aurora@boutique.com', 'Av. Las Flores 120, La Paz', 'Cliente mayorista de blusas satinadas'),
+('Diseños María', '71223344', 'contacto@disenosmaria.com', 'Calle Comercio 45, Cochabamba', 'Compra línea ejecutiva cada temporada'),
+('Estilo Urbano', '78901234', 'ventas@estilourbano.com', 'Av. América 890, Santa Cruz', 'Busca textiles denim y básicos deportivos');
+
+-- Tabla categorias (colecciones textiles)
 CREATE TABLE categorias (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(50) NOT NULL,
   estado ENUM('activo','inactivo') DEFAULT 'activo'
 );
 
--- Tabla platos (productos reales del restaurante)
+INSERT INTO categorias (nombre, estado) VALUES
+('Colección Casual', 'activo'),
+('Colección Ejecutiva', 'activo'),
+('Línea Denim', 'activo'),
+('Accesorios', 'activo');
+
+-- Tabla platos (productos textiles del catálogo)
 CREATE TABLE platos (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(100) NOT NULL,
@@ -38,27 +59,34 @@ CREATE TABLE platos (
   imagen VARCHAR(255),
   categoria_id INT,
   estado ENUM('disponible', 'agotado', 'inactivo') DEFAULT 'disponible',
-  tiempo_preparacion INT DEFAULT 0, -- minutos
+  tiempo_preparacion INT DEFAULT 0, -- Tiempo de confección en días
   creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (categoria_id) REFERENCES categorias(id)
 );
 
--- Tabla pedidos (pedidos realizados)
+INSERT INTO platos (nombre, descripcion, precio, imagen, categoria_id, estado, tiempo_preparacion) VALUES
+('Blusa Lino Amalfi', 'Blusa holgada de lino italiano con botones nacarados.', 185.00, NULL, 1, 'disponible', 5),
+('Saco Estructurado Verona', 'Saco entallado con hombros suavizados y forro premium.', 420.50, NULL, 2, 'disponible', 12),
+('Pantalón Denim Indigo', 'Pantalón jean de tiro alto con lavado profundo y elastano.', 210.00, NULL, 3, 'disponible', 8),
+('Pañuelo Seda Print', 'Pañuelo 100% seda con estampado inspirado en textiles andinos.', 95.75, NULL, 4, 'agotado', 3),
+('Vestido Midi Gardenia', 'Vestido midi estampado floral con cinturón removible.', 360.00, NULL, 1, 'disponible', 10);
+
+-- Tabla pedidos (órdenes registradas)
 CREATE TABLE pedidos (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  usuario_id INT, -- quien tomó el pedido
-  cliente_id INT, -- para quién es el pedido
+  usuario_id INT,
+  cliente_id INT,
   fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   hora_entrega TIME NULL,
   total DECIMAL(10,2) NOT NULL,
-  estado ENUM('pendiente', 'en preparación', 'entregado', 'cancelado') DEFAULT 'pendiente',
-  metodo_pedido ENUM('local', 'delivery', 'telefono') DEFAULT 'local',
+  estado ENUM('pendiente', 'en confección', 'listo', 'cancelado') DEFAULT 'pendiente',
+  metodo_pedido ENUM('tienda', 'delivery', 'mayorista') DEFAULT 'tienda',
   comentarios TEXT NULL,
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
   FOREIGN KEY (cliente_id) REFERENCES clientes(id)
 );
 
--- Tabla detalle_pedidos (platos que contiene cada pedido)
+-- Tabla detalle_pedidos (productos incluidos en cada orden)
 CREATE TABLE detalle_pedidos (
   id INT AUTO_INCREMENT PRIMARY KEY,
   pedido_id INT NOT NULL,
@@ -70,7 +98,7 @@ CREATE TABLE detalle_pedidos (
   FOREIGN KEY (plato_id) REFERENCES platos(id)
 );
 
--- Tabla facturas (para facturación y uso con DOMPDF)
+-- Tabla facturas (comprobantes generados)
 CREATE TABLE facturas (
   id INT AUTO_INCREMENT PRIMARY KEY,
   pedido_id INT NOT NULL,
@@ -87,3 +115,4 @@ CREATE TABLE facturas (
   observaciones TEXT,
   FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
 );
+

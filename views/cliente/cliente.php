@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Lista de Clientes</title>
+<title>Clientes Textil Camila</title>
 <?php require_once __DIR__ . '/../../includes/header.php'; ?>
 <link rel="stylesheet" href="/proyectofinal/assets/css/dashboard.css" />
 <link rel="stylesheet" href="/proyectofinal/assets/css/navbar.css" />
@@ -27,9 +27,9 @@ table.datatable th, table.datatable td {
 
 <div class="container mt-5">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Lista de Clientes</h2>
+    <h2>Boutiques y clientes</h2>
     <a href="/proyectofinal/controllers/ClienteController.php?action=create" class="btn btn-success">
-      <i class="bi bi-person-plus-fill"></i> Nuevo Cliente
+      <i class="bi bi-person-plus-fill"></i> Nuevo cliente
     </a>
   </div>
 

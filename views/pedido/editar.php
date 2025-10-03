@@ -1,11 +1,12 @@
 <?php require_once __DIR__ . '/../../includes/control.php'; ?>
 <?php if (!isset($clientes)) { $clientes = []; } ?>
+<?php if (!isset($detalle) || !is_array($detalle)) { $detalle = []; } ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Editar Pedido</title>
+  <title>Editar orden Textil Camila</title>
   <?php require_once __DIR__ . '/../../includes/header.php'; ?>
   <link rel="stylesheet" href="/proyectofinal/assets/css/dashboard.css" />
   <link rel="stylesheet" href="/proyectofinal/assets/css/navbar.css" />
@@ -15,7 +16,7 @@
 <?php require_once __DIR__ . '/../../includes/navbar.php'; ?>
 
 <div class="container mt-4">
-  <h4 class="mb-4">Editar Pedido #<?= $pedido['id'] ?></h4>
+  <h4 class="mb-4">Editar orden #<?= $pedido['id'] ?></h4>
 
   <form id="formPedido">
     <div class="row g-2 align-items-end">
@@ -30,11 +31,18 @@
         </select>
       </div>
       <div class="col-md-2">
-        <label class="form-label">Método</label>
+        <label class="form-label">Canal</label>
         <select name="metodo" class="form-select form-select-sm" required>
-          <?php foreach (['local','delivery','telefono'] as $op): ?>
-            <option value="<?= $op ?>" <?= $op == $pedido['metodo_pedido'] ? 'selected' : '' ?>>
-              <?= ucfirst($op) ?>
+          <?php
+            $canales = [
+              'tienda' => 'Venta en tienda',
+              'delivery' => 'Entrega programada',
+              'mayorista' => 'Mayorista'
+            ];
+          ?>
+          <?php foreach ($canales as $valor => $texto): ?>
+            <option value="<?= $valor ?>" <?= $valor == $pedido['metodo_pedido'] ? 'selected' : '' ?>>
+              <?= $texto ?>
             </option>
           <?php endforeach; ?>
         </select>
@@ -44,17 +52,17 @@
         <input type="time" name="hora_entrega" value="<?= $pedido['hora_entrega'] ?>" class="form-control form-control-sm" />
       </div>
       <div class="col-md-5">
-        <label class="form-label">Comentarios</label>
-        <input type="text" name="comentarios" value="<?= htmlspecialchars($pedido['comentarios']) ?>" class="form-control form-control-sm" />
+        <label class="form-label">Notas internas</label>
+        <input type="text" name="comentarios" value="<?= htmlspecialchars($pedido['comentarios']) ?>" class="form-control form-control-sm" placeholder="Especificaciones de confección, color, etc." />
       </div>
     </div>
 
     <hr class="my-4">
-    <h6>Modificar Detalle</h6>
+    <h6>Modificar detalle de productos</h6>
 
     <div class="row g-2 mb-3 align-items-end">
       <div class="col-md-6">
-        <label class="form-label">Plato</label>
+        <label class="form-label">Producto</label>
         <select id="selectPlato" class="form-select form-select-sm"></select>
       </div>
       <div class="col-md-3">
@@ -69,7 +77,7 @@
     <table class="table table-bordered table-sm" id="tablaCarrito">
       <thead class="table-light">
         <tr>
-          <th>Plato</th>
+          <th>Producto</th>
           <th>Cantidad</th>
           <th>Precio</th>
           <th>Total</th>
@@ -81,7 +89,7 @@
 
     <div class="d-flex justify-content-between align-items-center mt-3">
       <div><strong>Total:</strong> Bs. <span id="totalVisible">0.00</span></div>
-      <button type="submit" class="btn btn-primary btn-sm">Actualizar Pedido</button>
+      <button type="submit" class="btn btn-primary btn-sm">Actualizar orden</button>
     </div>
 
     <input type="hidden" name="detalle_json" id="detalle_json">
@@ -104,11 +112,13 @@ function cargarPlatos() {
     .then(res => res.json())
     .then(data => {
       const select = document.getElementById("selectPlato");
+      select.innerHTML = '<option value="">Selecciona un producto</option>';
       data.forEach(p => {
         let opt = document.createElement("option");
         opt.value = p.id;
         opt.text = p.nombre + " - Bs. " + parseFloat(p.precio).toFixed(2);
         opt.dataset.precio = p.precio;
+        opt.dataset.nombre = p.nombre;
         select.appendChild(opt);
       });
       renderCarrito();
@@ -118,13 +128,15 @@ function cargarPlatos() {
 function agregarAlCarrito() {
   const select = document.getElementById("selectPlato");
   const plato_id = select.value;
-  const nombre = select.options[select.selectedIndex].text;
+  const nombre = select.selectedOptions[0]?.dataset.nombre || '';
   const cantidad = parseInt(document.getElementById("cantidad").value);
   const precio = parseFloat(select.selectedOptions[0].dataset.precio);
   if (!plato_id || cantidad <= 0) return;
 
   carrito.push({ plato_id, nombre, cantidad, precio, total: cantidad * precio });
   renderCarrito();
+  select.value = '';
+  document.getElementById("cantidad").value = 1;
 }
 
 function quitar(index) {

@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Nuevo Plato</title>
+<title>Nuevo producto textil</title>
 <?php require_once __DIR__ . '/../../includes/header.php'; ?>
 <link rel="stylesheet" href="/proyectofinal/assets/css/dashboard.css" />
 <link rel="stylesheet" href="/proyectofinal/assets/css/navbar.css" />
@@ -14,7 +14,7 @@
 <?php require_once __DIR__ . '/../../includes/navbar.php'; ?>
 
 <div class="container mt-5">
-  <h2>Nuevo Plato</h2>
+  <h2>Nuevo producto</h2>
 
   <?php if (!empty($error)): ?>
     <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
@@ -58,12 +58,12 @@
     </div>
 
     <div class="mb-3">
-      <label for="tiempo_preparacion" class="form-label">Tiempo de Preparación (minutos)</label>
+      <label for="tiempo_preparacion" class="form-label">Tiempo de confección (días)</label>
       <input type="number" min="0" id="tiempo_preparacion" name="tiempo_preparacion" class="form-control" value="<?= htmlspecialchars($_POST['tiempo_preparacion'] ?? 0) ?>" />
     </div>
 
 
-    <button type="submit" class="btn btn-primary">Crear Plato</button>
+    <button type="submit" class="btn btn-primary">Crear producto</button>
     <a href="/proyectofinal/controllers/PlatoController.php?action=index" class="btn btn-secondary">Cancelar</a>
   </form>
 </div>

@@ -1,12 +1,15 @@
 <?php
-require_once '../vendor/autoload.php';
-require_once '../models/Pedido.php';
+require_once __DIR__ . '/../includes/control.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../models/Pedido.php';
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
 if (!isset($_GET['id'])) {
-    die("ID de pedido no proporcionado.");
+    http_response_code(400);
+    echo 'ID de orden no proporcionado.';
+    exit;
 }
 
 $pedido_id = $_GET['id'];
@@ -15,7 +18,9 @@ $pedido = $pedidoModel->obtenerPedidoPorId($pedido_id);
 $detalle = $pedidoModel->obtenerDetalle($pedido_id);
 
 if (!$pedido) {
-    die("Pedido no encontrado.");
+    http_response_code(404);
+    echo 'Orden no encontrada.';
+    exit;
 }
 
 // Preparar HTML para PDF
@@ -38,7 +43,7 @@ ob_start();
 </head>
 <body>
 
-<h2>Factura Pedido N° <?= $pedido['id'] ?></h2>
+<h2>Factura Orden N° <?= $pedido['id'] ?></h2>
 
 <table class="info">
   <tr>
@@ -50,15 +55,28 @@ ob_start();
     <td><strong>Usuario:</strong> <?= htmlspecialchars($pedido['usuario']) ?></td>
   </tr>
   <tr>
-    <td><strong>Método:</strong> <?= $pedido['metodo_pedido'] ?></td>
-    <td><strong>Estado:</strong> <?= $pedido['estado'] ?></td>
+    <?php
+      $mapaMetodos = [
+        'tienda' => 'Venta en tienda',
+        'delivery' => 'Entrega programada',
+        'mayorista' => 'Mayorista'
+      ];
+      $mapaEstados = [
+        'pendiente' => 'Pendiente',
+        'en confección' => 'En confección',
+        'listo' => 'Lista para entrega',
+        'cancelado' => 'Cancelada'
+      ];
+    ?>
+    <td><strong>Canal:</strong> <?= $mapaMetodos[$pedido['metodo_pedido']] ?? $pedido['metodo_pedido'] ?></td>
+    <td><strong>Estado:</strong> <?= $mapaEstados[$pedido['estado']] ?? $pedido['estado'] ?></td>
   </tr>
 </table>
 
 <table class="detalle">
   <thead>
     <tr>
-      <th>Plato</th>
+      <th>Producto</th>
       <th>Cantidad</th>
       <th>Precio Unitario</th>
       <th>Subtotal</th>
@@ -94,4 +112,4 @@ $dompdf = new Dompdf($options);
 $dompdf->loadHtml($html);
 $dompdf->setPaper('A4', 'portrait');
 $dompdf->render();
-$dompdf->stream("pedido_{$pedido_id}.pdf", ["Attachment" => false]);
+$dompdf->stream("orden_{$pedido_id}.pdf", ["Attachment" => false]);
