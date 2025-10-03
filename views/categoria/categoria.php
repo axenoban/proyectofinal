@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Lista de Categorías</title>
+<title>Colecciones Textil Camila</title>
 <?php require_once __DIR__ . '/../../includes/header.php'; ?>
 <link rel="stylesheet" href="/proyectofinal/assets/css/dashboard.css" />
 <link rel="stylesheet" href="/proyectofinal/assets/css/navbar.css" />
@@ -27,9 +27,9 @@ table.datatable th, table.datatable td {
 
 <div class="container mt-5">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Lista de Categorías</h2>
+    <h2>Colecciones disponibles</h2>
     <a href="/proyectofinal/controllers/CategoriaController.php?action=create" class="btn btn-success">
-      <i class="bi bi-plus-circle"></i> Nueva Categoría
+      <i class="bi bi-plus-circle"></i> Nueva colección
     </a>
   </div>
 
@@ -44,7 +44,7 @@ table.datatable th, table.datatable td {
       </thead>
       <tbody>
         <?php if(count($categorias) === 0): ?>
-          <tr><td colspan="3" class="text-center">No hay categorías registradas.</td></tr>
+          <tr><td colspan="3" class="text-center">No hay colecciones registradas.</td></tr>
         <?php else: ?>
           <?php foreach ($categorias as $categoria): ?>
             <tr>

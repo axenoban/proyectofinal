@@ -14,7 +14,7 @@ switch ($action) {
 
     case 'create':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nombre = $_POST['nombre'];
+            $nombre = trim($_POST['nombre'] ?? '');
             $estado = $_POST['estado'] ?? 'activo';
 
             if ($categoriaModel->existsByName($nombre)) {
@@ -39,7 +39,7 @@ switch ($action) {
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nombre = $_POST['nombre'];
+            $nombre = trim($_POST['nombre'] ?? '');
             $estado = $_POST['estado'] ?? 'activo';
 
             if ($categoriaModel->existsByName($nombre, $id)) {

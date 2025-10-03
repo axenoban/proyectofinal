@@ -14,14 +14,15 @@ switch ($action) {
 
     case 'create':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nombre = $_POST['nombre'];
-            $telefono = $_POST['telefono'];
-            $email = $_POST['email'];
-            $direccion = $_POST['direccion'];
-            $fecha_nacimiento = $_POST['fecha_nacimiento'] ?? null;
-            $notas = $_POST['notas'] ?? null;
+            $nombre = trim($_POST['nombre'] ?? '');
+            $telefono = trim($_POST['telefono'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $email = $email === '' ? null : $email;
+            $direccion = trim($_POST['direccion'] ?? '');
+            $fecha_nacimiento = $_POST['fecha_nacimiento'] ?: null;
+            $notas = trim($_POST['notas'] ?? '') ?: null;
 
-            if ($clienteModel->existsCliente($email)) {
+            if ($email !== null && $clienteModel->existsCliente($email)) {
                 $error = "El cliente con ese email ya existe.";
                 include __DIR__ . '/../views/cliente/FormCliente.php';
                 exit;
@@ -43,15 +44,16 @@ switch ($action) {
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nombre = $_POST['nombre'];
-            $telefono = $_POST['telefono'];
-            $email = $_POST['email'];
-            $direccion = $_POST['direccion'];
-            $fecha_nacimiento = $_POST['fecha_nacimiento'] ?? null;
-            $notas = $_POST['notas'] ?? null;
+            $nombre = trim($_POST['nombre'] ?? '');
+            $telefono = trim($_POST['telefono'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $email = $email === '' ? null : $email;
+            $direccion = trim($_POST['direccion'] ?? '');
+            $fecha_nacimiento = $_POST['fecha_nacimiento'] ?: null;
+            $notas = trim($_POST['notas'] ?? '') ?: null;
 
             // Validar duplicado email excepto el cliente actual
-            if ($clienteModel->existsClienteExceptId($email, $id)) {
+            if ($email !== null && $clienteModel->existsClienteExceptId($email, $id)) {
                 $error = "El cliente con ese email ya existe.";
                 $cliente = $clienteModel->getById($id);
                 include __DIR__ . '/../views/cliente/EditCliente.php';

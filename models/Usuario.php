@@ -29,9 +29,9 @@ class Usuario {
             if (password_verify($password, $storedPassword)) {
                 if (password_needs_rehash($storedPassword, PASSWORD_DEFAULT)) {
                     $this->rehashPassword((int) $user['id'], $password);
-                    $user = $this->getUserWithPassword((int) $user['id']);
                 }
-                return $user;
+                $this->updateLastLogin((int) $user['id']);
+                return $this->getUserWithPassword((int) $user['id']);
             }
         } else {
             // Caso 2: la contraseña está almacenada en texto plano o con algoritmos legados
@@ -39,6 +39,7 @@ class Usuario {
                 if ($this->rehashPassword((int) $user['id'], $password)) {
                     $user = $this->getUserWithPassword((int) $user['id']);
                 }
+                $this->updateLastLogin((int) $user['id']);
                 return $user;
             }
 
@@ -47,6 +48,7 @@ class Usuario {
                 if ($this->rehashPassword((int) $user['id'], $password)) {
                     $user = $this->getUserWithPassword((int) $user['id']);
                 }
+                $this->updateLastLogin((int) $user['id']);
                 return $user;
             }
 
@@ -54,11 +56,17 @@ class Usuario {
                 if ($this->rehashPassword((int) $user['id'], $password)) {
                     $user = $this->getUserWithPassword((int) $user['id']);
                 }
+                $this->updateLastLogin((int) $user['id']);
                 return $user;
             }
         }
 
         return false;
+    }
+
+    private function updateLastLogin(int $id): void {
+        $stmt = $this->conn->prepare("UPDATE usuarios SET ultimo_login = NOW() WHERE id = :id");
+        $stmt->execute(['id' => $id]);
     }
 
     private function rehashPassword(int $id, string $password): bool {

@@ -1,23 +1,33 @@
-.navbar
-{
-    background-color: rgb(0, 0, 0);
+.navbar {
+    background: linear-gradient(90deg, #1a2732 0%, #27475f 100%);
 }
-.nav-link
-{
-    color: white;
+
+.nav-link {
+    color: #f4f7fb;
+    font-weight: 500;
+    transition: color 0.2s ease-in-out;
 }
-.navbar-brand
-{
-    color: white;
+
+.navbar-brand {
+    color: #fbe9d7;
+    letter-spacing: 0.03em;
 }
-.navbar-brand:hover
-{
-    color: rgb(132, 132, 133);
+
+.navbar-brand:hover {
+    color: #ffd3a5;
 }
 
 .nav-link:hover,
 .nav-link:active,
 .nav-link:focus,
 .nav-link.active {
-        color: rgb(132, 132, 133) !important;
+    color: #ffd3a5 !important;
+}
+
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.navbar-toggler-icon {
+    filter: invert(1);
 }

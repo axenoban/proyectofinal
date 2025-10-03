@@ -14,6 +14,9 @@ class Cliente
     // Verificar si un cliente existe por email (puedes cambiar a telefono o nombre si quieres)
     public function existsCliente($email)
     {
+        if ($email === null || $email === '') {
+            return false;
+        }
         $stmt = $this->conn->prepare("SELECT 1 FROM clientes WHERE email = :email LIMIT 1");
         $stmt->execute(['email' => $email]);
         return $stmt->fetchColumn() !== false;
@@ -21,6 +24,9 @@ class Cliente
 
     public function existsClienteExceptId($email, $id)
     {
+        if ($email === null || $email === '') {
+            return false;
+        }
         $stmt = $this->conn->prepare("SELECT 1 FROM clientes WHERE email = :email AND id != :id LIMIT 1");
         $stmt->execute(['email' => $email, 'id' => $id]);
         return $stmt->fetchColumn() !== false;
