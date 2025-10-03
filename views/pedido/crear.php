@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Crear Pedido</title>
+  <title>Nueva orden Textil Camila</title>
   <?php require_once __DIR__ . '/../../includes/header.php'; ?>
   <link rel="stylesheet" href="/proyectofinal/assets/css/dashboard.css" />
   <link rel="stylesheet" href="/proyectofinal/assets/css/navbar.css" />
@@ -15,7 +15,7 @@
 <?php require_once __DIR__ . '/../../includes/navbar.php'; ?>
 
 <div class="container mt-4">
-  <h4 class="mb-4">Nuevo Pedido</h4>
+  <h4 class="mb-4">Nueva orden de confección</h4>
 
   <form id="formPedido">
     <div class="row g-2 align-items-end">
@@ -30,11 +30,11 @@
       </div>
 
       <div class="col-md-2">
-        <label for="metodo" class="form-label">Método</label>
+        <label for="metodo" class="form-label">Canal</label>
         <select name="metodo" id="metodo" class="form-select form-select-sm" required>
-          <option value="local">Local</option>
-          <option value="delivery">Delivery</option>
-          <option value="telefono">Teléfono</option>
+          <option value="tienda">Venta en tienda</option>
+          <option value="delivery">Entrega programada</option>
+          <option value="mayorista">Mayorista</option>
         </select>
       </div>
 
@@ -44,17 +44,17 @@
       </div>
 
       <div class="col-md-5">
-        <label for="comentarios" class="form-label">Comentarios</label>
-        <input type="text" name="comentarios" id="comentarios" class="form-control form-control-sm" />
+        <label for="comentarios" class="form-label">Notas internas</label>
+        <input type="text" name="comentarios" id="comentarios" class="form-control form-control-sm" placeholder="Especificaciones de confección, color, etc." />
       </div>
     </div>
 
     <hr class="my-4">
-    <h6>Agregar Platos</h6>
+    <h6>Agregar productos del catálogo</h6>
 
     <div class="row g-2 mb-3 align-items-end">
       <div class="col-md-6">
-        <label for="selectPlato" class="form-label">Plato</label>
+        <label for="selectPlato" class="form-label">Producto</label>
         <select id="selectPlato" class="form-select form-select-sm">
           <!-- cargado por JS -->
         </select>
@@ -71,7 +71,7 @@
     <table class="table table-bordered table-sm" id="tablaCarrito">
       <thead class="table-light">
         <tr>
-          <th>Plato</th>
+          <th>Producto</th>
           <th>Cantidad</th>
           <th>Precio</th>
           <th>Total</th>
@@ -101,11 +101,13 @@ function cargarPlatos() {
     .then(res => res.json())
     .then(data => {
       let select = document.getElementById("selectPlato");
+      select.innerHTML = '<option value="">Selecciona un producto</option>';
       data.forEach(p => {
         let opt = document.createElement("option");
         opt.value = p.id;
         opt.text = p.nombre + " - Bs. " + parseFloat(p.precio).toFixed(2);
         opt.dataset.precio = p.precio;
+        opt.dataset.nombre = p.nombre;
         select.appendChild(opt);
       });
     });
@@ -114,7 +116,7 @@ function cargarPlatos() {
 function agregarAlCarrito() {
   let select = document.getElementById("selectPlato");
   let plato_id = select.value;
-  let nombre = select.options[select.selectedIndex].text;
+  let nombre = select.selectedOptions[0]?.dataset.nombre || '';
   let cantidad = parseInt(document.getElementById("cantidad").value);
   let precio = parseFloat(select.selectedOptions[0].dataset.precio);
 
@@ -122,6 +124,8 @@ function agregarAlCarrito() {
 
   carrito.push({ plato_id, nombre, cantidad, precio, total: cantidad * precio });
   renderCarrito();
+  select.value = '';
+  document.getElementById("cantidad").value = 1;
 }
 
 function renderCarrito() {
@@ -157,14 +161,17 @@ document.getElementById("formPedido").addEventListener("submit", function(e) {
   fetch('/proyectofinal/controllers/PedidoController.php?action=create', {
     method: 'POST',
     body: form
-  }).then(res => res.json()).then(data => {
+  })
+  .then(res => res.json())
+  .then(data => {
     if (data.status === 'ok') {
-      alert("Pedido guardado con éxito");
+      alert("Orden guardada con éxito");
       window.location.href = "/proyectofinal/controllers/PedidoController.php?action=index";
     } else {
-      alert("Error al guardar");
+      alert(data.message || "No fue posible guardar la orden");
     }
-  });
+  })
+  .catch(() => alert("No fue posible guardar la orden"));
 });
 
 window.addEventListener("DOMContentLoaded", cargarPlatos);

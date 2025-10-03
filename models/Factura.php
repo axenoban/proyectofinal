@@ -1,8 +1,9 @@
 <?php
-require_once 'Conexion.php';
+require_once 'conexion.php';
 
-class Factura extends Conexion
+class Factura
 {
+    private $conn;
     public function __construct()
     {
         $db = new Conexion();
@@ -24,7 +25,7 @@ class Factura extends Conexion
         $sql = "SELECT * FROM facturas";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     // Método para actualizar el estado de la factura (por ejemplo, marcar como 'emitida' o 'anulada')
     public function actualizarEstadoFactura($factura_id, $estado)
@@ -41,17 +42,18 @@ class Factura extends Conexion
         $sql = "SELECT * FROM facturas WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$id]);
-        return $stmt->fetch();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Método para obtener todos los detalles de una factura por el ID del pedido
+    // Método para obtener todos los detalles de una factura por el ID de la orden
     public function obtenerDetalleFactura($pedido_id)
     {
-        $sql = "SELECT * FROM detalle_pedidos dp
+        $sql = "SELECT dp.*, p.nombre
+                FROM detalle_pedidos dp
                 JOIN platos p ON dp.plato_id = p.id
                 WHERE dp.pedido_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$pedido_id]);
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

@@ -1,9 +1,7 @@
 <?php
 session_start();
-$error = '';
-if (isset($_GET['error']) && $_GET['error'] == 1) {
-    $error = "Usuario o contraseña incorrecta";
-}
+$error = $_SESSION['login_error'] ?? '';
+unset($_SESSION['login_error']);
 ?>
 
 <!DOCTYPE html>
@@ -11,14 +9,14 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>BIENVENIDO</title>
+<title>Textil Camila - Acceso</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="/proyectofinal/assets/css/login.css" />
 </head>
 <body>
 
 <div class="login-card">
-  <h2 class="login-title">Login de Ingreso</h2>
+  <h2 class="login-title">Textil Camila</h2>
 
 
   <?php if (!empty($error)): ?>
@@ -27,8 +25,8 @@ if (isset($_GET['error']) && $_GET['error'] == 1) {
 
   <form method="POST" action="/proyectofinal/controllers/login.php">
     <div class="mb-3">
-      <label for="username" class="form-label">Usuario</label>
-      <input type="text" class="form-control" id="username" name="username" placeholder="Ingrese usuario" required />
+      <label for="username" class="form-label">Correo corporativo</label>
+      <input type="text" class="form-control" id="username" name="username" placeholder="admin@gmail.com" required />
     </div>
     <div class="mb-3">
       <label for="password" class="form-label">Contraseña</label>

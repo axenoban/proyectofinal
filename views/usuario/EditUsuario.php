@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Editar Usuario</title>
+<title>Editar usuario</title>
 <?php require_once __DIR__ . '/../../includes/header.php'; ?>
 <link rel="stylesheet" href="/proyectofinal/assets/css/dashboard.css" />
 <link rel="stylesheet" href="/proyectofinal/assets/css/navbar.css" />
@@ -14,7 +14,7 @@
 <?php require_once __DIR__ . '/../../includes/navbar.php'; ?>
 
 <div class="container mt-5">
-  <h2>Editar Usuario</h2>
+  <h2>Editar usuario</h2>
 
   <?php if (!empty($error)): ?>
     <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
@@ -52,7 +52,7 @@
       <input type="password" id="password" name="password" class="form-control" />
     </div>
 
-    <button type="submit" class="btn btn-primary">Actualizar Usuario</button>
+    <button type="submit" class="btn btn-primary">Actualizar usuario</button>
     <a href="/proyectofinal/controllers/UsuarioController.php?action=index" class="btn btn-secondary">Cancelar</a>
   </form>
 </div>

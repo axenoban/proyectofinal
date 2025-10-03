@@ -4,8 +4,7 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
   body {
-    /* Fondo con imagen que cubre toda la pantalla */
-    background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+    background: url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     justify-content: center;
@@ -26,21 +25,22 @@
   }
   .login-title {
     font-weight: 700;
-    color: #1f4037;
+    color: #1f3d59;
     margin-bottom: 30px;
     text-align: center;
+    letter-spacing: 0.05em;
   }
   label {
-    color: #1f4037;
+    color: #1f3d59;
     font-weight: 600;
   }
   .btn-primary {
-    background-color: #1f4037;
-    border-color: #1f4037;
+    background-color: #1f8a70;
+    border-color: #1f8a70;
   }
   .btn-primary:hover {
-    background-color: #16663c;
-    border-color: #16663c;
+    background-color: #166b55;
+    border-color: #166b55;
   }
   .alert-danger {
     border-radius: 10px;
