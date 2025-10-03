@@ -1,0 +1,89 @@
+-- Tabla usuarios (admins y empleados)
+CREATE TABLE usuarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  nombre VARCHAR(100),
+  rol ENUM('admin', 'empleado') DEFAULT 'empleado',
+  estado ENUM('activo', 'inactivo') DEFAULT 'activo',
+  ultimo_login TIMESTAMP NULL,
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla clientes (quienes hacen pedidos)
+CREATE TABLE clientes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  telefono VARCHAR(20),
+  email VARCHAR(100),
+  direccion TEXT,
+  fecha_nacimiento DATE NULL,
+  notas TEXT NULL,
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla categorias (para clasificar los platos)
+CREATE TABLE categorias (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(50) NOT NULL,
+  estado ENUM('activo','inactivo') DEFAULT 'activo'
+);
+
+-- Tabla platos (productos reales del restaurante)
+CREATE TABLE platos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  descripcion TEXT,
+  precio DECIMAL(10,2) NOT NULL,
+  imagen VARCHAR(255),
+  categoria_id INT,
+  estado ENUM('disponible', 'agotado', 'inactivo') DEFAULT 'disponible',
+  tiempo_preparacion INT DEFAULT 0, -- minutos
+  creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (categoria_id) REFERENCES categorias(id)
+);
+
+-- Tabla pedidos (pedidos realizados)
+CREATE TABLE pedidos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT, -- quien tomó el pedido
+  cliente_id INT, -- para quién es el pedido
+  fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  hora_entrega TIME NULL,
+  total DECIMAL(10,2) NOT NULL,
+  estado ENUM('pendiente', 'en preparación', 'entregado', 'cancelado') DEFAULT 'pendiente',
+  metodo_pedido ENUM('local', 'delivery', 'telefono') DEFAULT 'local',
+  comentarios TEXT NULL,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+  FOREIGN KEY (cliente_id) REFERENCES clientes(id)
+);
+
+-- Tabla detalle_pedidos (platos que contiene cada pedido)
+CREATE TABLE detalle_pedidos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  pedido_id INT NOT NULL,
+  plato_id INT NOT NULL,
+  cantidad INT NOT NULL,
+  precio_unitario DECIMAL(10,2) NOT NULL,
+  observaciones TEXT NULL,
+  FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
+  FOREIGN KEY (plato_id) REFERENCES platos(id)
+);
+
+-- Tabla facturas (para facturación y uso con DOMPDF)
+CREATE TABLE facturas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  pedido_id INT NOT NULL,
+  fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  numero_factura VARCHAR(20) UNIQUE NOT NULL,
+  cliente_nombre VARCHAR(100),
+  cliente_ruc VARCHAR(20),
+  direccion TEXT,
+  subtotal DECIMAL(10,2),
+  impuesto DECIMAL(10,2),
+  total DECIMAL(10,2) NOT NULL,
+  forma_pago VARCHAR(50),
+  estado ENUM('emitida', 'anulada') DEFAULT 'emitida',
+  observaciones TEXT,
+  FOREIGN KEY (pedido_id) REFERENCES pedidos(id)
+);

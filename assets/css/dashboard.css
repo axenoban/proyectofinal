@@ -1,0 +1,55 @@
+#card1:hover
+{
+    transition-delay: 50ms;
+    background-color: rgb(24, 89, 209);
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+#card2:hover
+{
+    transition-delay: 50ms;
+    background-color: rgb(209, 24, 24);
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+#card3:hover
+{
+    transition-delay: 50ms;
+    background-color: rgb(13, 109, 0);
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+#card4:hover
+{
+    transition-delay: 50ms;
+    background-color: rgb(24, 89, 209);
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+#card5:hover
+{
+    transition-delay: 50ms;
+    background-color: rgb(209, 24, 24);
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+#card6:hover
+{
+    transition-delay: 50ms;
+    background-color: rgb(13, 109, 0);
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+.datatable {
+  visibility: hidden;
+}
+.dataTables_length {
+  margin-top: 1rem;  /* separa el selector del borde superior */
+  margin-bottom: 1rem; /* separa del contenido debajo, si quieres */
+}

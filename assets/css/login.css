@@ -1,0 +1,47 @@
+  body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  body {
+    /* Fondo con imagen que cubre toda la pantalla */
+    background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .login-card {
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 400px;
+    transition: transform 0.3s ease;
+  }
+  .login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+  }
+  .login-title {
+    font-weight: 700;
+    color: #1f4037;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  label {
+    color: #1f4037;
+    font-weight: 600;
+  }
+  .btn-primary {
+    background-color: #1f4037;
+    border-color: #1f4037;
+  }
+  .btn-primary:hover {
+    background-color: #16663c;
+    border-color: #16663c;
+  }
+  .alert-danger {
+    border-radius: 10px;
+  }
