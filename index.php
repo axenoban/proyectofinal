@@ -1,9 +1,7 @@
 <?php
 session_start();
-$error = '';
-if (isset($_GET['error']) && $_GET['error'] == 1) {
-    $error = "Usuario o contraseña incorrecta";
-}
+$error = $_SESSION['login_error'] ?? '';
+unset($_SESSION['login_error']);
 ?>
 
 <!DOCTYPE html>

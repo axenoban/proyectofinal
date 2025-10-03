@@ -7,18 +7,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     $usuario = new Usuario();
-    $user = $usuario->login($username, $password);
+
+    try {
+        $user = $usuario->login($username, $password);
+    } catch (Throwable $e) {
+        $_SESSION['login_error'] = 'No se pudo validar tus credenciales. Verifica la base de datos.';
+        header('Location: ../index.php');
+        exit;
+    }
 
     if ($user) {
         $_SESSION['user'] = $user;
+        unset($_SESSION['login_error']);
         header('Location: ../views/dashboard.php');
         exit;
-    } else {
-        // Redirige a index.php con parámetro de error
-        header('Location: ../index.php?error=1');
-        exit;
     }
-} else {
+
+    $_SESSION['login_error'] = 'Usuario o contraseña incorrecta.';
     header('Location: ../index.php');
     exit;
 }
+
+header('Location: ../index.php');
+exit;

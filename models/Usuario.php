@@ -10,9 +10,11 @@ class Usuario {
     }
     
     public function login($username, $password) {
-        $sql = "SELECT * FROM usuarios WHERE username = :username AND estado = 'activo'";
+        $this->ensureDefaultAdmin();
+
+        $sql = "SELECT * FROM usuarios WHERE LOWER(username) = LOWER(:username) AND estado = 'activo'";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':username', $username, PDO::PARAM_STR);
         $stmt->execute();
 
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -82,6 +84,27 @@ class Usuario {
         $stmt = $this->conn->prepare("SELECT * FROM usuarios WHERE id = :id");
         $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    private function ensureDefaultAdmin(): void {
+        try {
+            $stmt = $this->conn->query('SELECT COUNT(*) FROM usuarios');
+            $count = (int) $stmt->fetchColumn();
+        } catch (PDOException $e) {
+            throw $e;
+        }
+
+        if ($count > 0) {
+            return;
+        }
+
+        $defaultPassword = password_hash('1234', PASSWORD_DEFAULT);
+        $seed = $this->conn->prepare("INSERT INTO usuarios (username, password, nombre, rol, estado) VALUES (:username, :password, :nombre, 'admin', 'activo')");
+        $seed->execute([
+            'username' => 'admin@gmail.com',
+            'password' => $defaultPassword,
+            'nombre' => 'Administrador'
+        ]);
     }
 
     // Verifica si username existe (para crear)
